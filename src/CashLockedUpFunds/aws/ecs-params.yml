@@ -1,0 +1,5 @@
+version: 1
+task_definition:
+  CashLockedUpFunds:
+    cpu_shares: 100
+    mem_limit: 524288000

@@ -1,0 +1,15 @@
+version: "2"
+services:
+    CashLockedUpFunds:
+    image: 048155013810.dkr.ecr.eu-west-1.amazonaws.com/CashLockedUpFunds:$VERSION
+    cpu_shares: 100
+    mem_limit: 524288000
+    ports:
+      - 80:80
+    environment:
+      TENANT: $TENANT
+      DEPLOYMENT: $DEPLOYMENT
+      CLIENTKEY: $CLIENTKEY
+      CLIENTSECRET: $CLIENTSECRET
+      http_proxy: http://OutboundProxyLoadBalancer-20117c2c36e5b89e.elb.eu-west-1.amazonaws.com:3128
+      https_proxy: http://OutboundProxyLoadBalancer-20117c2c36e5b89e.elb.eu-west-1.amazonaws.com:3128

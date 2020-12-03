@@ -1,0 +1,354 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Cash Locked Up Funds",
+    "version" : "1.0.0",
+    "title" : "Cash Locked Up Funds"
+  },
+  "paths" : {
+    "/GetLockedUpFunds" : {
+      "get" : {
+        "tags" : [ "Mocked" ],
+        "description" : "Returns a summary and detail of the locked funds associated with the entity but utilizes exchange rates internally to report in the currency requested\n",
+        "parameters" : [ {
+          "name" : "currencyType",
+          "in" : "query",
+          "description" : "The currency type",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "entityId",
+          "in" : "query",
+          "description" : "The entityId for the user to be dealt with.",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK\n",
+            "schema" : {
+              "$ref" : "#/definitions/CashLockedUpsResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request error messages.\n",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorMessagesResponse"
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          }
+        }
+      }
+    },
+    "/LockedUpFunds" : {
+      "post" : {
+        "tags" : [ "Mocked" ],
+        "description" : "Records locked up funds against an entity.\n",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "cashLockedUpRequest",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/CashLockedUpRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK      \n"
+          }
+        }
+      }
+    },
+    "/locked-up-funds/{Id}/unlock" : {
+      "post" : {
+        "tags" : [ "Mocked" ],
+        "description" : "Records locked up funds against an entity.\n",
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Authorizer",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Id",
+          "in" : "path",
+          "description" : "Id for the cash locked up funds dealt with.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "cashLockedUpRequest",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/CashLockedUpDateRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK   \n"
+          }
+        }
+      }
+    },
+    "/locked-up-funds/calculate-withdrawable-amount" : {
+      "post" : {
+        "tags" : [ "Mocked" ],
+        "description" : "Records locked up funds against an entity.\n",
+        "parameters" : [ {
+          "name" : "trustAccountId",
+          "in" : "query",
+          "description" : "trustAccountId for the user dealt with.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "CashLockedUpWithdrawableRequest",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/CashLockedUpWithdrawableRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK\n",
+            "schema" : {
+              "$ref" : "#/definitions/CashLockedUpWithdrawableResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "CashLockedUpRequest" : {
+      "type" : "object",
+      "properties" : {
+        "entityId" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "trustAccountId" : {
+          "type" : "integer",
+          "example" : 72
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "ZAR"
+        },
+        "amount" : {
+          "type" : "number",
+          "example" : 500.0
+        },
+        "lockedUpUntil" : {
+          "type" : "string",
+          "example" : "2020-12-15T00:00:00.000+0000"
+        },
+        "reference" : {
+          "type" : "string",
+          "example" : "123435455"
+        }
+      }
+    },
+    "CashLockedUpDateRequest" : {
+      "type" : "object",
+      "properties" : {
+        "lockedUpUntil" : {
+          "type" : "string",
+          "example" : "2020-12-15T00:00:00.000+0000"
+        }
+      }
+    },
+    "CashLockedUpWithdrawableRequest" : {
+      "type" : "object",
+      "properties" : {
+        "nav-by-accounts" : {
+          "type" : "string",
+          "example" : "2020-12-15T00:00:00.000+0000"
+        },
+        "exchange-rates" : {
+          "type" : "string",
+          "example" : "2020-12-15T00:00:00.000+0000"
+        }
+      }
+    },
+    "CashLockedUpsResponse" : {
+      "type" : "object",
+      "required" : [ "cashLockedUps" ],
+      "properties" : {
+        "cashLockedUps" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/CashLockedUpResponse"
+          }
+        },
+        "summary" : {
+          "$ref" : "#/definitions/CashLockedUpSummaryResponse"
+        }
+      },
+      "example" : {
+        "summary" : {
+          "currency" : "ZAR",
+          "lockedUpFunds" : 500.0
+        },
+        "cashLockedUps" : [ {
+          "amount" : 500.0,
+          "trustAccountId" : 72,
+          "lockUpDate" : "2020-12-15T00:00:00.000+0000",
+          "currency" : "ZAR",
+          "amountAtRateOfExchange" : 500.0,
+          "id" : 1,
+          "rateOfExchange" : 1.0
+        }, {
+          "amount" : 500.0,
+          "trustAccountId" : 72,
+          "lockUpDate" : "2020-12-15T00:00:00.000+0000",
+          "currency" : "ZAR",
+          "amountAtRateOfExchange" : 500.0,
+          "id" : 1,
+          "rateOfExchange" : 1.0
+        } ]
+      }
+    },
+    "CashLockedUpResponse" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "trustAccountId" : {
+          "type" : "integer",
+          "example" : 72
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "ZAR"
+        },
+        "rateOfExchange" : {
+          "type" : "number",
+          "example" : 1.0
+        },
+        "amount" : {
+          "type" : "number",
+          "example" : 500.0
+        },
+        "amountAtRateOfExchange" : {
+          "type" : "number",
+          "example" : 500.0
+        },
+        "lockUpDate" : {
+          "type" : "string",
+          "example" : "2020-12-15T00:00:00.000+0000"
+        }
+      },
+      "example" : {
+        "amount" : 500.0,
+        "trustAccountId" : 72,
+        "lockUpDate" : "2020-12-15T00:00:00.000+0000",
+        "currency" : "ZAR",
+        "amountAtRateOfExchange" : 500.0,
+        "id" : 1,
+        "rateOfExchange" : 1.0
+      }
+    },
+    "CashLockedUpSummaryResponse" : {
+      "type" : "object",
+      "properties" : {
+        "currency" : {
+          "type" : "string",
+          "example" : "ZAR"
+        },
+        "lockedUpFunds" : {
+          "type" : "number",
+          "example" : 500.0
+        }
+      },
+      "example" : {
+        "currency" : "ZAR",
+        "lockedUpFunds" : 500.0
+      }
+    },
+    "CashLockedUpWithdrawableResponse" : {
+      "type" : "object",
+      "properties" : {
+        "lockedUpFunds" : {
+          "type" : "number",
+          "example" : 200.0
+        },
+        "totalNAV" : {
+          "type" : "number",
+          "example" : 1500.0
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "ZAR"
+        },
+        "freeCash" : {
+          "type" : "number",
+          "example" : 1500.0
+        },
+        "unsettledTrades" : {
+          "type" : "number",
+          "example" : 0.0
+        },
+        "withdrawable" : {
+          "type" : "number",
+          "example" : 1300.0
+        }
+      },
+      "example" : {
+        "unsettledTrades" : 0.0,
+        "withdrawable" : 1300.0,
+        "totalNAV" : 1500.0,
+        "freeCash" : 1500.0,
+        "currency" : "ZAR",
+        "lockedUpFunds" : 200.0
+      }
+    },
+    "ErrorMessagesResponse" : {
+      "type" : "object",
+      "properties" : {
+        "errorMessages" : {
+          "type" : "array",
+          "description" : "A list of all the bad request error messages that can occur.",
+          "items" : {
+            "$ref" : "#/definitions/Error"
+          }
+        }
+      }
+    },
+    "Error" : {
+      "type" : "object",
+      "properties" : {
+        "code" : {
+          "type" : "integer",
+          "example" : 5002,
+          "description" : "The error code"
+        },
+        "message" : {
+          "type" : "string",
+          "example" : "You do not have enough credits for this action.",
+          "description" : "The error message"
+        }
+      }
+    }
+  },
+  "parameters" : {
+    "CurrencyType" : {
+      "name" : "currencyType",
+      "in" : "query",
+      "description" : "The currency type",
+      "required" : true,
+      "type" : "string"
+    },
+    "EntityId" : {
+      "name" : "entityId",
+      "in" : "query",
+      "description" : "The entityId for the user to be dealt with.",
+      "required" : true,
+      "type" : "integer"
+    }
+  }
+}
